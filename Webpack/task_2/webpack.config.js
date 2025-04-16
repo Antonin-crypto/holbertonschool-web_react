@@ -1,28 +1,28 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  mode: "production",
-  entry: "./js/dashboard_main.js",
+  mode: 'production',
+  entry: './js/dashboard_main.js',
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "public"),
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'public'),
     clean: true,
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
-        type: "asset/resource",
+        type: 'asset/resource',
         generator: {
-          filename: "images/[hash][ext][query]",
+          filename: 'images/[hash][ext][query]',
         },
         use: [
           {
-            loader: "image-webpack-loader",
+            loader: 'image-webpack-loader',
             options: {
               mozjpeg: {
                 progressive: true,
