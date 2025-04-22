@@ -33,8 +33,8 @@ describe("App component", () => {
   // New tests for the form
   test("renders 2 input elements", () => {
     render(<App />);
-    const inputs = screen.getAllByRole("textbox"); // or 'input' depending on input type
-    expect(inputs).toHaveLength(1);
+    const inputs = screen.getAllByRole('input'); // or 'input' depending on input type
+    expect(inputs).toHaveLength(2);
   });
 
   test("renders 2 label elements with the text Email and Password", () => {
