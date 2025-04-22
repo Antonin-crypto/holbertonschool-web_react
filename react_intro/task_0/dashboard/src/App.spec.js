@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import App from './App';
 
 describe('App component', () => {
-  test('renders h1 with text 'School dashboard'', () => {
+  test('renders h1 with text School dashboard', () => {
     render(<App />);
     const heading = screen.getByRole('heading', { name: /school dashboard/i });
     expect(heading).toBeInTheDocument();
