@@ -5,7 +5,7 @@ import App from './App';
 describe('App component', () => {
   test('renders h1 with text School dashboard', () => {
     render(<App />);
-    const heading = screen.getByRole('heading', { name: /school dashboard/i });
+    const heading = screen.getByRole('heading', { name: /School Dashboard/i });
     expect(heading).toBeInTheDocument();
   });
 
@@ -13,14 +13,15 @@ describe('App component', () => {
     render(<App />);
 
     // Paragraph in App-body
-    const bodyText = screen.getByText(/login to access the full dashboard/i);
+    const bodyText = screen.getByText(/Login to access the full dashboard/i);
     expect(bodyText).toBeInTheDocument();
 
     // Paragraph in App-footer
     const currentYear = new Date().getFullYear();
     const footerText = screen.getByText(
-      new RegExp(`©? ?${currentYear} - holberton school`, 'i')
+      `Copyright ${currentYear} - holberton School`
     );
+
     expect(footerText).toBeInTheDocument();
   });
 
