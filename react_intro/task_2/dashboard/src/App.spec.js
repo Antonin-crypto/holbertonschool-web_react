@@ -1,15 +1,15 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-describe('App component', () => {
-  test('renders h1 with text School dashboard', () => {
+describe("App component", () => {
+  test("renders h1 with text School dashboard", () => {
     render(<App />);
-    const heading = screen.getByRole('heading', { name: /School Dashboard/i });
+    const heading = screen.getByRole("heading", { name: /School Dashboard/i });
     expect(heading).toBeInTheDocument();
   });
 
-  test('renders correct text in body and footer', () => {
+  test("renders correct text in body and footer", () => {
     render(<App />);
 
     // Paragraph in App-body
@@ -25,19 +25,19 @@ describe('App component', () => {
     expect(footerText).toBeInTheDocument();
   });
 
-  test('renders the logo image', () => {
+  test("renders the logo image", () => {
     render(<App />);
     const image = screen.getByAltText(/holberton logo/i);
     expect(image).toBeInTheDocument();
   });
   // New tests for the form
-  test('renders 2 input elements', () => {
+  test("renders 2 input elements", () => {
     render(<App />);
     const inputs = screen.getAllByLabelText(/email|password/i);
     expect(inputs).toHaveLength(2);
   });
 
-  test('renders 2 label elements with the text Email and Password', () => {
+  test("renders 2 label elements with the text Email and Password", () => {
     render(<App />);
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
@@ -45,9 +45,9 @@ describe('App component', () => {
     expect(passwordLabel).toBeInTheDocument();
   });
 
-  test('renders a button with the text OK', () => {
+  test('renders a button with the text "OK"', () => {
     render(<App />);
-    const button = screen.getByRole('button', { name: /ok/i });
+    const button = screen.getByRole("button", { name: /ok/i });
     expect(button).toBeInTheDocument();
   });
 });
