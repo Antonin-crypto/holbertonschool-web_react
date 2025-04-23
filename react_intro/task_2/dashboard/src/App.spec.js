@@ -33,7 +33,7 @@ describe("App component", () => {
   // New tests for the form
   test("renders 2 input elements", () => {
     render(<App />);
-    const inputs = screen.getAllByRole('input'); // or 'input' depending on input type
+    const inputs = screen.getAllByLabelText(/email|password/i);
     expect(inputs).toHaveLength(2);
   });
 
@@ -45,7 +45,7 @@ describe("App component", () => {
     expect(passwordLabel).toBeInTheDocument();
   });
 
-  test('renders a button with the text "OK"', () => {
+  test("renders a button with the text OK", () => {
     render(<App />);
     const button = screen.getByRole("button", { name: /ok/i });
     expect(button).toBeInTheDocument();
