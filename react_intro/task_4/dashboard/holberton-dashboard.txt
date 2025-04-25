@@ -1,1 +1,1 @@
-https://Antonin-crypto.github.io/holberton-dashboard
+https://antonin-crypto.github.io/holbertonschool-web_react/
