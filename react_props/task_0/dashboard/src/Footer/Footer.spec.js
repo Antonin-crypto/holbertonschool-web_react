@@ -1,7 +1,11 @@
-import { render } from "@testing-library/react";
+import React from "react";
+import { render, screen } from "@testing-library/react";
 import Footer from "./Footer";
 
-test("rendu du composant Footer", () => {
-  render(<Footer />);
-  // Ajouter des tests pour le footer ici
+describe("Footer component", () => {
+  test("renders the footer text", () => {
+    render(<Footer />);
+    const footerText = screen.getByText(/copyright/i);
+    expect(footerText).toBeInTheDocument();
+  });
 });
