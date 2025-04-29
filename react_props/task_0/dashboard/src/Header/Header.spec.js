@@ -1,19 +1,20 @@
-/* eslint-env jest */
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import Header from "./Header";
 
-describe("Header", () => {
-  test("renders logo image", () => {
+describe("Header component", () => {
+  test("renders the main heading", () => {
     render(<Header />);
-    const logo = screen.getByAltText(/holberton logo/i);
-    expect(logo).toBeInTheDocument();
+    const heading = screen.getByRole("heading", {
+      level: 1,
+      name: /school dashboard/i,
+    });
+    expect(heading).toBeInTheDocument();
   });
 
-  test("renders h1 with correct text", () => {
+  test("renders the Holberton logo image", () => {
     render(<Header />);
-    const heading = screen.getByText(/School dashboard/i);
-    expect(heading).toBeInTheDocument();
-    expect(heading.tagName).toBe("H1");
+    const image = screen.getByAltText(/holberton logo/i);
+    expect(image).toBeInTheDocument();
   });
 });

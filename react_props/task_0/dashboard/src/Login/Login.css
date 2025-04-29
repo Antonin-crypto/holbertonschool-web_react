@@ -1,15 +1,12 @@
 .App-body {
-  padding: 2rem;
+  text-align: center;
 }
 
-.App-login {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin: auto;
+input {
+  margin: 5px;
+  padding: 10px;
 }
 
-.App-login label,
-.App-login input {
-  margin-bottom: 0.5rem;
+button {
+  padding: 10px;
 }
