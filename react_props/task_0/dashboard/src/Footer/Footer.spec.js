@@ -1,11 +1,13 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
-import Footer from "./Footer";
+import "./Footer.css";
+import { getCurrentYear, getFooterCopy } from "../utils/utils";
 
-describe("Footer component", () => {
-  test("renders the footer text", () => {
-    render(<Footer />);
-    const footerText = screen.getByText(/copyright/i);
-    expect(footerText).toBeInTheDocument();
-  });
-});
+export default function Footer() {
+  return (
+    <div className="App-footer">
+      <p>
+        Copyright {getCurrentYear()} - {getFooterCopy(false)}
+      </p>
+    </div>
+  );
+}
