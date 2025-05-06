@@ -18,6 +18,6 @@ describe("CourseList", () => {
   it("renders 1 row when it receives an empty array", () => {
     const { container } = render(<CourseList courses={[]} />);
     const rows = container.querySelectorAll("tr");
-    expect(rows.length).toBe(3);
+    expect(rows.length).toBe(1);
   });
 });

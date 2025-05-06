@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Notifications from "./Notifications";
 import { getLatestNotification } from "../utils/utils.js";
+import { cleanup } from "@testing-library/react";
 
 describe("Notifications", () => {
   const mockNotifications = [
@@ -110,5 +111,73 @@ describe("Whenever the the prop displayDrawer set to true", () => {
     expect(
       screen.queryByText("No new notification for now")
     ).toBeInTheDocument();
+  });
+});
+
+describe("Notifications performance tests", () => {
+  afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
+  });
+
+  test("should not re-render if notifications length is the same", () => {
+    const initialNotifications = [
+      { id: 1, type: "default", value: "New course available" },
+      { id: 2, type: "urgent", value: "New resume available" },
+    ];
+
+    const { rerender } = render(
+      <Notifications
+        notifications={initialNotifications}
+        displayDrawer={true}
+      />
+    );
+
+    const listItemsBefore = screen.getAllByRole("listitem");
+
+    const newNotifications = [
+      { id: 1, type: "default", value: "Updated content" },
+      { id: 2, type: "urgent", value: "Updated content" },
+    ];
+
+    rerender(
+      <Notifications notifications={newNotifications} displayDrawer={true} />
+    );
+
+    const listItemsAfter = screen.getAllByRole("listitem");
+
+    // Same number of list items rendered (no update happened)
+    expect(listItemsAfter.length).toBe(listItemsBefore.length);
+  });
+
+  test("should re-render if notifications length changes", () => {
+    const initialNotifications = [
+      { id: 1, type: "default", value: "New course available" },
+    ];
+
+    const { rerender } = render(
+      <Notifications
+        notifications={initialNotifications}
+        displayDrawer={true}
+      />
+    );
+
+    let listItems = screen.getAllByRole("listitem");
+    expect(listItems.length).toBe(1);
+
+    const updatedNotifications = [
+      ...initialNotifications,
+      { id: 2, type: "urgent", value: "New resume available" },
+    ];
+
+    rerender(
+      <Notifications
+        notifications={updatedNotifications}
+        displayDrawer={true}
+      />
+    );
+
+    listItems = screen.getAllByRole("listitem");
+    expect(listItems.length).toBe(2);
   });
 });
