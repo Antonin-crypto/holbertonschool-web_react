@@ -1,6 +1,14 @@
 import { render } from "@testing-library/react";
 import CourseList from "./CourseList";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("CourseList", () => {
   it("renders 5 rows when it receives an array of 5 courses", () => {
     const courses = [

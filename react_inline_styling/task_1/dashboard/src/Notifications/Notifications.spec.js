@@ -2,7 +2,15 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Notifications from "./Notifications";
 import { getLatestNotification } from "../utils/utils.js";
 import { cleanup } from "@testing-library/react";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("Notifications", () => {
   const mockNotifications = [
     { id: 1, type: "default", value: "New course available" },

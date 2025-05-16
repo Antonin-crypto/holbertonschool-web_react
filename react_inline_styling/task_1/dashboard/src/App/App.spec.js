@@ -1,7 +1,15 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("App component", () => {
   test("renders header, login and footer components", () => {
     render(<App />);

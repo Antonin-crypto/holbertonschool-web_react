@@ -1,7 +1,15 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Login from "./Login";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("Login component", () => {
   test("renders 2 labels, 2 inputs, and 1 button", () => {
     render(<Login />);

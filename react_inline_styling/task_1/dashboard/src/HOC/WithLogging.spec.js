@@ -1,7 +1,15 @@
 import React from "react";
 import { render, screen, cleanup } from "@testing-library/react";
 import WithLogging from "./WithLogging";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 afterEach(() => {
   cleanup();
   jest.clearAllMocks();

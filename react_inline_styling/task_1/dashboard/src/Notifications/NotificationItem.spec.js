@@ -1,6 +1,14 @@
 import NotificationItem from "./NotificationItem";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 test("Check whether the li element has the color blue, and the the attribute data-notification-type set to default", () => {
   render(<NotificationItem type="default" value="Test notification" />);
   const li = screen.getByText("Test notification");

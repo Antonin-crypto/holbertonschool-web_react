@@ -1,6 +1,14 @@
 import { render } from "@testing-library/react";
 import CourseListRow from "./CourseListRow";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("CourseListRow", () => {
   it("renders one columnheader with colspan=2 when isHeader is true and textSecondCell is null", () => {
     const { container } = render(

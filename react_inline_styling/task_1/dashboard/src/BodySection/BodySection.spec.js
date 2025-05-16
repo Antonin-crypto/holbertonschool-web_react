@@ -1,7 +1,15 @@
 import React from "react";
 import { shallow } from "enzyme";
 import BodySection from "./BodySection";
+import { StyleSheetTestUtils } from "aphrodite";
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 describe("<BodySection />", () => {
   let wrapper;
 
