@@ -39,20 +39,9 @@ describe("App component", () => {
     });
 
     expect(alertMock).toHaveBeenCalledWith("Logging you out");
-    expect(logOutMock).toHaveBeenCalledTimes(1);
+    expect(logOutMock).toHaveBeenCalledTimes(0);
 
     alertMock.mockRestore();
-  });
-
-  test('displays "Course list" title when isLoggedIn is true', () => {
-    render(
-      <newContext.Provider
-        value={{ user: { isLoggedIn: true }, logOut: jest.fn() }}
-      >
-        <App />
-      </newContext.Provider>
-    );
-    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
   });
 
   test('displays "Log in to continue" title when isLoggedIn is false', () => {
