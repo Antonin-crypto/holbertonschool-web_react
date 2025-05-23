@@ -13,9 +13,11 @@ import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBot
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       displayDrawer: false,
     };
+
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
@@ -56,7 +58,6 @@ class App extends React.Component {
 
   render() {
     const { isLoggedIn } = this.props;
-    const { displayDrawer } = this.state;
 
     const notificationsList = [
       { id: 1, type: "urgent", value: "New course available" },
@@ -75,7 +76,7 @@ class App extends React.Component {
         <div className={css(styles.notifications)}>
           <Notifications
             notifications={notificationsList}
-            displayDrawer={displayDrawer}
+            displayDrawer={this.state.displayDrawer}
             handleDisplayDrawer={this.handleDisplayDrawer}
             handleHideDrawer={this.handleHideDrawer}
           />
