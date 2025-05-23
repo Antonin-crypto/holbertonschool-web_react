@@ -1,0 +1,76 @@
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
+import { StyleSheetTestUtils } from "aphrodite";
+import newContext from "../Context/context"; // Assure-toi que le chemin est correct
+
+// Empêche l'injection des styles dans le DOM lors des tests
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+describe("App component", () => {
+  test("renders header, login and footer components", () => {
+    render(<App />);
+    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
+  });
+
+  test("calls logOut and alerts when Ctrl + H is pressed", () => {
+    const logOutMock = jest.fn();
+    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
+
+    render(
+      <newContext.Provider
+        value={{ user: { isLoggedIn: true }, logOut: logOutMock }}
+      >
+        <App />
+      </newContext.Provider>
+    );
+
+    fireEvent.keyDown(document, {
+      key: "h",
+      ctrlKey: true,
+    });
+
+    expect(alertMock).toHaveBeenCalledWith("Logging you out");
+    expect(logOutMock).toHaveBeenCalledTimes(1);
+
+    alertMock.mockRestore();
+  });
+
+  test('displays "Course list" title when isLoggedIn is true', () => {
+    render(
+      <newContext.Provider
+        value={{ user: { isLoggedIn: true }, logOut: jest.fn() }}
+      >
+        <App />
+      </newContext.Provider>
+    );
+    expect(screen.getByText(/Course list/i)).toBeInTheDocument();
+  });
+
+  test('displays "Log in to continue" title when isLoggedIn is false', () => {
+    render(
+      <newContext.Provider
+        value={{ user: { isLoggedIn: false }, logOut: jest.fn() }}
+      >
+        <App />
+      </newContext.Provider>
+    );
+    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+  });
+
+  test("displays News from the School and its paragraph", () => {
+    render(<App />);
+    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Holberton School News goes here/i)
+    ).toBeInTheDocument();
+  });
+});
