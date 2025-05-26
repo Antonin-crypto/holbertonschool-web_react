@@ -25,13 +25,11 @@ describe("App component", () => {
     const logOutMock = jest.fn();
     const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
 
-    render(
-      <newContext.Provider
-        value={{ user: { isLoggedIn: true }, logOut: logOutMock }}
-      >
-        <App />
-      </newContext.Provider>
-    );
+    // Mocke la méthode logOut directement sur le prototype de App
+    const originalLogOut = App.prototype.logOut;
+    App.prototype.logOut = logOutMock;
+
+    render(<App />);
 
     fireEvent.keyDown(document, {
       key: "h",
@@ -39,8 +37,10 @@ describe("App component", () => {
     });
 
     expect(alertMock).toHaveBeenCalledWith("Logging you out");
-    expect(logOutMock).toHaveBeenCalledTimes(0);
+    expect(logOutMock).toHaveBeenCalledTimes(1);
 
+    // Nettoyage
+    App.prototype.logOut = originalLogOut;
     alertMock.mockRestore();
   });
 
