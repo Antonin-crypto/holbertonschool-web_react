@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Header from "./Header";
-import newContext from "../Context/context";
+import AppContext from "../Context/context";
 import { StyleSheetTestUtils } from "aphrodite";
 
 beforeAll(() => {
@@ -30,9 +30,9 @@ test("does not render logout section if user is not logged in", () => {
     logOut: jest.fn(),
   };
   render(
-    <newContext.Provider value={contextValue}>
+    <AppContext.Provider value={contextValue}>
       <Header />
-    </newContext.Provider>
+    </AppContext.Provider>
   );
   const logoutSection = screen.queryByTestId("logoutSection");
   expect(logoutSection).not.toBeInTheDocument();
@@ -44,9 +44,9 @@ test("renders logout section if user is logged in", () => {
     logOut: jest.fn(),
   };
   render(
-    <newContext.Provider value={contextValue}>
+    <AppContext.Provider value={contextValue}>
       <Header />
-    </newContext.Provider>
+    </AppContext.Provider>
   );
   screen.getByText(
     (content, element) =>
@@ -63,9 +63,9 @@ test("calls logOut function when logout link is clicked", () => {
   };
 
   render(
-    <newContext.Provider value={contextValue}>
+    <AppContext.Provider value={contextValue}>
       <Header />
-    </newContext.Provider>
+    </AppContext.Provider>
   );
 
   const logoutLink = screen.getByText("(logout)");

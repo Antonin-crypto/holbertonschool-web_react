@@ -2,10 +2,10 @@
 import React, { useContext } from "react";
 import logo from "../assets/holberton-logo.jpg";
 import { StyleSheet, css } from "aphrodite";
-import newContext from "../Context/context";
+import AppContext from "../Context/context";
 
 function Header() {
-  const { user, logOut } = useContext(newContext);
+  const { user, logOut } = useContext(AppContext);
 
   return (
     <>

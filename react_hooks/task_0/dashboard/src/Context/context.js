@@ -8,6 +8,6 @@ export const user = {
 
 export const logOut = () => {};
 
-const newContext = React.createContext({ user, logOut });
+const AppContext = React.createContext({ user, logOut });
 
-export default newContext;
+export default AppContext;

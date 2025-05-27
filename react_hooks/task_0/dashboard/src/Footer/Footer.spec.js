@@ -1,21 +1,70 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
-import { getCurrentYear, getFooterCopy } from "../utils/utils";
 import Footer from "./Footer";
+import AppContext from "../Context/context";
+import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import { StyleSheetTestUtils } from "aphrodite";
 
-test("the text content within the 2 p elements in the app-body and app-footer divs matches", () => {
-  render(<Footer />);
-  const divfooter = screen.getByText(/Copyright 2025 - holberton School/i);
-
-  expect(divfooter).toBeInTheDocument();
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
 });
 
-test("renders correct footer content when isIndex is true", () => {
-  render(<Footer />);
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  const year = getCurrentYear();
-  const copy = getFooterCopy(true);
-  const expectedText = `Copyright ${year} - ${copy}`;
+describe("Footer component", () => {
+  test("renders copyright with default context (not logged in)", () => {
+    render(<Footer />);
+    const year = getCurrentYear();
+    const copy = getFooterCopy(true);
+    const expectedText = `Copyright ${year} - ${copy}`;
+    expect(
+      screen.getByText(expectedText, { exact: false })
+    ).toBeInTheDocument();
 
-  const footerText = screen.getByText(expectedText, { exact: false });
-  expect(footerText).toBeInTheDocument();
+    // Vérifie que "Contact us" n’est PAS affiché
+    expect(screen.queryByText(/contact us/i)).not.toBeInTheDocument();
+  });
+
+  test('renders "Contact us" when user is logged in via context', () => {
+    const contextValue = {
+      user: {
+        email: "test@mail.com",
+        password: "12345678",
+        isLoggedIn: true,
+      },
+      logOut: jest.fn(),
+    };
+
+    render(
+      <AppContext.Provider value={contextValue}>
+        <Footer />
+      </AppContext.Provider>
+    );
+
+    expect(screen.getByText(/contact us/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /contact us/i })
+    ).toBeInTheDocument();
+  });
+
+  test('does not render "Contact us" when user is not logged in', () => {
+    const contextValue = {
+      user: {
+        email: "",
+        password: "",
+        isLoggedIn: false,
+      },
+      logOut: jest.fn(),
+    };
+
+    render(
+      <AppContext.Provider value={contextValue}>
+        <Footer />
+      </AppContext.Provider>
+    );
+
+    expect(screen.queryByText(/contact us/i)).not.toBeInTheDocument();
+  });
 });
