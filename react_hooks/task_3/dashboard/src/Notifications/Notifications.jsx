@@ -1,19 +1,16 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { StyleSheet, css } from "aphrodite";
 import closebtn from "../assets/close-button.png";
 import NotificationItem from "./NotificationItem";
 import PropTypes from "prop-types";
 
-const Notifications = ({
+function Notifications({
   notifications,
   displayDrawer,
   handleDisplayDrawer,
   handleHideDrawer,
-}) => {
-  const markAsRead = useCallback((id) => {
-    console.log(`Notification ${id} has been marked as read`);
-  }, []);
-
+  markNotificationAsRead,
+}) {
   return (
     <>
       {!displayDrawer && (
@@ -45,7 +42,7 @@ const Notifications = ({
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={() => markAsRead(notification.id)}
+                    markAsRead={() => markNotificationAsRead(notification.id)}
                   />
                 ))}
               </ul>
@@ -56,14 +53,6 @@ const Notifications = ({
         </div>
       )}
     </>
-  );
-};
-
-// Custom comparison for memoization
-function areEqual(prevProps, nextProps) {
-  return (
-    prevProps.notifications.length === nextProps.notifications.length &&
-    prevProps.displayDrawer === nextProps.displayDrawer
   );
 }
 
@@ -95,7 +84,9 @@ const styles = StyleSheet.create({
       animationIterationCount: "3",
     },
   },
-  menuText: { margin: 0 },
+  menuText: {
+    margin: 0,
+  },
   panel: {
     border: "2px dashed red",
     padding: "10px",
@@ -160,6 +151,7 @@ Notifications.propTypes = {
   ),
   handleDisplayDrawer: PropTypes.func,
   handleHideDrawer: PropTypes.func,
+  markNotificationAsRead: PropTypes.func,
 };
 
 Notifications.defaultProps = {
@@ -167,6 +159,14 @@ Notifications.defaultProps = {
   notifications: [],
   handleDisplayDrawer: () => {},
   handleHideDrawer: () => {},
+  markNotificationAsRead: () => {},
 };
+
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps.notifications.length === nextProps.notifications.length &&
+    prevProps.displayDrawer === nextProps.displayDrawer
+  );
+}
 
 export default React.memo(Notifications, areEqual);
