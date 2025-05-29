@@ -15,7 +15,9 @@ describe("App component", () => {
   test("renders header, login and footer components", () => {
     render(<App />);
     expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Login to access the full dashboard/i)
+    ).toBeInTheDocument();
     expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
   });
 
@@ -69,5 +71,30 @@ describe("App notification drawer behavior", () => {
     expect(
       screen.queryByText(/Here is the list of notifications/i)
     ).not.toBeInTheDocument();
+  });
+
+  test("markNotificationAsRead removes the notification and logs it", () => {
+    const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+    render(<App />);
+
+    // Ouvrir le drawer
+    fireEvent.click(screen.getByText(/your notifications/i));
+
+    // Vérifier que la notification est présente
+    const notification = screen.getByText(/New course available/i);
+    expect(notification).toBeInTheDocument();
+
+    // Cliquer dessus (simule appel à markNotificationAsRead)
+    fireEvent.click(notification);
+
+    // Attendre que la notification soit supprimée
+    expect(screen.queryByText(/New course available/i)).not.toBeInTheDocument();
+
+    // Vérifie que le log est correct
+    expect(logSpy).toHaveBeenCalledWith(
+      "Notification 1 has been marked as read"
+    );
+
+    logSpy.mockRestore();
   });
 });

@@ -2,21 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import { StyleSheet, css } from "aphrodite";
 
-const NotificationItem = React.memo(function NotificationItem({
-  type,
-  html,
-  value,
-  id,
-  markAsRead,
-}) {
+const NotificationItem = ({ type, html, value, id, markAsRead }) => {
   const styleClass = css(
     type === "urgent" ? styles.urgent : styles.default,
     styles.responsive
   );
 
-  const handleClick = () => {
-    markAsRead(id);
-  };
+  const handleClick = () => markAsRead(id);
 
   if (html) {
     return (
@@ -38,7 +30,10 @@ const NotificationItem = React.memo(function NotificationItem({
       {value}
     </li>
   );
-});
+};
+
+// Performance optimization (memoization)
+export default React.memo(NotificationItem);
 
 const styles = StyleSheet.create({
   default: {
@@ -71,5 +66,3 @@ NotificationItem.defaultProps = {
   type: "default",
   markAsRead: () => {},
 };
-
-export default NotificationItem;
