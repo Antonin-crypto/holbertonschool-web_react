@@ -1,31 +1,30 @@
-import { getCurrentYear, getFooterCopy, getLatestNotification } from "./utils";
-import { StyleSheetTestUtils } from "aphrodite";
-// Empêche l'injection des styles dans le DOM lors des tests
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
+import { getCurrentYear, getFooterCopy, getLatestNotification } from './utils';
+
+describe('getFullyYear', () => {
+    it('Returns the current year', () => {
+        const currentYear = new Date().getFullYear();
+        expect(getCurrentYear()).toBe(currentYear);
+    });
 });
 
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+describe('getFooterCopy', () => {
+    it('Returns the footer copy for the index page', () => {
+        const isIndex = true;
+        const footerCopy = getFooterCopy(isIndex);
+        expect(footerCopy).toBe('Holberton School');
+    });
+    it('Returns the footer copy for non-index pages', () => {
+        const isIndex = false;
+        const footerCopy = getFooterCopy(isIndex);
+        expect(footerCopy).toBe('Holberton School main dashboard');
+    });
 });
 
-describe("Utils functions", () => {
-  test("getCurrentYear returns the current year", () => {
-    const year = getCurrentYear();
-    expect(year).toBe(new Date().getFullYear());
-  });
-
-  test("getFooterCopy returns correct string when true", () => {
-    expect(getFooterCopy(true)).toBe("Holberton School"); // Correct casing
-  });
-
-  test("getFooterCopy returns correct string when false", () => {
-    expect(getFooterCopy(false)).toBe("Holberton School main dashboard"); // Correct casing
-  });
-
-  test("getLatestNotification returns expected HTML string", () => {
-    const notification = getLatestNotification();
-    expect(notification).toContain("<strong>Urgent requirement</strong>");
-    expect(notification).toMatch(/complete by EOD/i);
-  });
+describe('getLatestNotification', () => {
+    it('Returns the latest notification', () => {
+        const latestNotification = getLatestNotification();
+        expect(latestNotification).toBe(
+            '<strong>Urgent requirement</strong> - complete by EOD'
+        );
+    });
 });

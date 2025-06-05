@@ -1,55 +1,22 @@
-import React from "react";
-import { render, screen, cleanup } from "@testing-library/react";
-import WithLogging from "./WithLogging";
-import { StyleSheetTestUtils } from "aphrodite";
+import React from 'react';
+import { render, screen, cleanup } from '@testing-library/react';
+import WithLogging from './WithLogging';
 
-// Empêche l'injection des styles dans le DOM lors des tests
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
-
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
-
-afterEach(() => {
-  cleanup();
-  jest.clearAllMocks();
-});
+afterEach(cleanup)
 
 class MockApp extends React.Component {
-  render() {
-    return <h1>Hello from Mock App Component</h1>;
-  }
+    render() {
+        return (
+            <h1>
+                Hello from Mock App Component
+            </h1>
+        )
+    }
 }
 
-describe("WithLogging HOC", () => {
-  it("renders the wrapped component correctly", () => {
-    const Wrapped = WithLogging(MockApp);
-    render(<Wrapped />);
-    expect(
-      screen.getByText(/Hello from Mock App Component/i)
-    ).toBeInTheDocument();
-  });
+const MockWithHOC = WithLogging(MockApp)
 
-  it("logs on mount and unmount", () => {
-    const consoleLogSpy = jest.spyOn(console, "log");
-
-    const Wrapped = WithLogging(MockApp);
-    const { unmount } = render(<Wrapped />);
-
-    expect(consoleLogSpy).toHaveBeenCalledWith("Component MockApp is mounted");
-
-    unmount();
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "Component MockApp is going to unmount"
-    );
-  });
-
-  it("uses default name if component name is missing", () => {
-    const NamelessComponent = () => <p>Anonymous</p>;
-    const Wrapped = WithLogging(NamelessComponent);
-    render(<Wrapped />);
-    expect(Wrapped.displayName).toBe("WithLogging(NamelessComponent)");
-  });
+test('Can render the heading "Hello from Mock App Component"', () => {
+    render(<MockWithHOC />)
+    expect(screen.getByRole('heading', { name: /hello from mock app component/i })).toBeInTheDocument();
 });

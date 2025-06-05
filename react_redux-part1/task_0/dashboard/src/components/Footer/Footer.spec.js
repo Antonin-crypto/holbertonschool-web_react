@@ -1,70 +1,61 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import Footer from "./Footer";
-import AppContext from "../Context/context";
-import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import { render, screen } from '@testing-library/react';
+import Footer from './Footer';
+import { getCurrentYear, getFooterCopy } from '../../utils/utils';
 import { StyleSheetTestUtils } from "aphrodite";
 
-beforeAll(() => {
+beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterAll(() => {
+afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe("Footer component", () => {
-  test("renders copyright with default context (not logged in)", () => {
-    render(<Footer />);
-    const year = getCurrentYear();
-    const copy = getFooterCopy(true);
-    const expectedText = `Copyright ${year} - ${copy}`;
-    expect(
-      screen.getByText(expectedText, { exact: false })
-    ).toBeInTheDocument();
 
-    // Vérifie que "Contact us" n’est PAS affiché
-    expect(screen.queryByText(/contact us/i)).not.toBeInTheDocument();
-  });
+describe('Footer Component', () => {
+    const defaultUser = { isLoggedIn: false, email: '', password: '' };
+    const loggedInUser = { isLoggedIn: true, email: 'test@example.com', password: 'password123' };
+    describe('Basic Rendering', () => {
+        test('Renders without crashing', () => {
+            render(<Footer user={defaultUser} />);
+            const footerParagraph = screen.getByText(`Copyright ${getCurrentYear()} - ${getFooterCopy(true)}`);
+            expect(footerParagraph).toHaveTextContent(/copyright \d{4} - holberton school/i);
+        });
 
-  test('renders "Contact us" when user is logged in via context', () => {
-    const contextValue = {
-      user: {
-        email: "test@mail.com",
-        password: "12345678",
-        isLoggedIn: true,
-      },
-      logOut: jest.fn(),
-    };
+        test('Does not render contact link when user is not logged in', () => {
+            render(<Footer user={defaultUser} />);
+            const link = screen.queryByRole('link', { name: /contact us/i });
+            expect(link).not.toBeInTheDocument();
+        });
 
-    render(
-      <AppContext.Provider value={contextValue}>
-        <Footer />
-      </AppContext.Provider>
-    );
+        test('Renders contact link when user is logged in', () => {
+            render(<Footer user={loggedInUser} />);
+            const link = screen.getByRole('link', { name: /contact us/i });
+            expect(link).toBeInTheDocument();
+        });
+    });
 
-    expect(screen.getByText(/contact us/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /contact us/i })
-    ).toBeInTheDocument();
-  });
+    describe('Edge Scenarios', () => {
+        test('does not render contact link when user email is null', () => {
+            const withTruthyIsLoggedIn = { isLoggedIn: true };
+            render(<Footer user={withTruthyIsLoggedIn} />);
+            const link = screen.queryByRole('link', { name: /contact us/i });
+            expect(link).toBeInTheDocument();
+        });
 
-  test('does not render "Contact us" when user is not logged in', () => {
-    const contextValue = {
-      user: {
-        email: "",
-        password: "",
-        isLoggedIn: false,
-      },
-      logOut: jest.fn(),
-    };
+        test('Does not render contact link when user email is invalid', () => {
+            const withFalsyIsLoggedIn = { isLoggedIn: false };
+            render(<Footer user={withFalsyIsLoggedIn} />);
 
-    render(
-      <AppContext.Provider value={contextValue}>
-        <Footer />
-      </AppContext.Provider>
-    );
+            const link = screen.queryByRole('link', { name: /contact us/i });
+            expect(link).not.toBeInTheDocument();
+        });
+    });
 
-    expect(screen.queryByText(/contact us/i)).not.toBeInTheDocument();
-  });
+    test('Should confirm Footer is a functional component', () => {
+        const FooterPrototype = Object.getOwnPropertyNames(Footer.prototype);
+        expect(FooterPrototype).toEqual(expect.arrayContaining(['constructor']));
+        expect(FooterPrototype).toHaveLength(1);
+        expect(Footer.prototype.__proto__).toEqual({});
+    });
 });

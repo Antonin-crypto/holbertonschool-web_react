@@ -1,28 +1,18 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import BodySection from "./BodySection";
-import { StyleSheetTestUtils } from "aphrodite";
+import { render, screen } from '@testing-library/react';
+import BodySection from './BodySection';
 
-beforeAll(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
-
-afterAll(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
-
-describe("<BodySection />", () => {
-  test("renders a heading and children", () => {
+test('Should pass any number of children without knows then beforehand', () => {
     render(
-      <BodySection title="test title">
-        <p>test children node</p>
-      </BodySection>
+        <BodySection title="Test Title">
+            <p>Child 1</p>
+            <p>Child 2</p>
+            <p>Child 3</p>
+        </BodySection>
     );
 
-    const heading = screen.getByRole("heading", { name: /test title/i });
-    const paragraph = screen.getByText(/test children node/i);
-
-    expect(heading).toBeInTheDocument();
-    expect(paragraph).toBeInTheDocument();
-  });
+    const titleElement = screen.getByRole('heading', { name: /test title/i });
+    expect(titleElement).toBeInTheDocument();
+    expect(screen.getByText('Child 1')).toBeInTheDocument();
+    expect(screen.getByText('Child 2')).toBeInTheDocument();
+    expect(screen.getByText('Child 3')).toBeInTheDocument();
 });
