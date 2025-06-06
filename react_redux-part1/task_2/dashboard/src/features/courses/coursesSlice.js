@@ -1,9 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { logout } from '../auth/authSlice'; // Import de l'action logout
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { logout } from "../auth/authSlice"; // Import de l'action logout
 
 // 1. Base URL et Endpoints
-const API_BASE_URL = 'http://localhost:5173';
+const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
   courses: `${API_BASE_URL}/courses.json`,
 };
@@ -15,7 +15,7 @@ const initialState = {
 
 // 3. Async thunk pour récupérer les cours
 export const fetchCourses = createAsyncThunk(
-  'courses/fetchCourses',
+  "courses/fetchCourses",
   async () => {
     const response = await axios.get(ENDPOINTS.courses);
     return response.data;
@@ -24,7 +24,7 @@ export const fetchCourses = createAsyncThunk(
 
 // 4. Création du slice
 const coursesSlice = createSlice({
-  name: 'courses',
+  name: "courses",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
