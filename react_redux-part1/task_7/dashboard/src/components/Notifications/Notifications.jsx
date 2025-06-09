@@ -7,7 +7,7 @@ import {
   markNotificationAsRead,
   showNotificationDrawer,
   hideNotificationDrawer,
-} from "../../actions/notificationActionCreators";
+} from "../Notifications/notificationActionCreators";
 
 const styles = StyleSheet.create({
   notificationTitle: {
