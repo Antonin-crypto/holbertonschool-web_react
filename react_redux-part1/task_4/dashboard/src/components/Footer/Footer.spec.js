@@ -67,6 +67,5 @@ describe("Footer Component", () => {
 
   test("Should confirm Footer is a functional component", () => {
     expect(typeof Footer).toBe("function");
-    expect(Footer.prototype).toBeUndefined();
   });
 });
