@@ -41,28 +41,8 @@ import userEvent from "@testing-library/user-event";
 import App from "../App";
 import { getLatestNotification } from "../utils/utils";
 import mockAxios from "jest-mock-axios";
-import { StyleSheetTestUtils } from "aphrodite";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
 
 jest.mock("axios", () => require("jest-mock-axios").default);
-// Empêche l'injection de styles Aphrodite dans les tests
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
-
-export function renderWithRedux(
-  ui,
-  { initialState, store = mockStore(initialState) } = {}
-) {
-  return {
-    ...render(<Provider store={store}>{ui}</Provider>),
-    store,
-  };
-}
 
 const mockBodySection = jest.fn();
 jest.mock("../components/BodySection/BodySection", () => {
@@ -751,7 +731,7 @@ describe("App Component Tests", () => {
 });
 
 describe("App Component Performance with useCallback", () => {
-  let store;
+  let originalConsoleError;
   let useCallbackSpy;
   const mockNotificationsResponse = {
     data: {
@@ -765,40 +745,20 @@ describe("App Component Performance with useCallback", () => {
 
   beforeEach(() => {
     useCallbackSpy = jest.spyOn(React, "useCallback");
-
     mockAxios.get.mockResolvedValue({
       data: {
         notifications: mockNotificationsResponse,
         courses: [],
       },
     });
-
-    store = mockStore({
-      auth: {
-        isLoggedIn: true,
-        user: { email: "test@test.com" },
-      },
-      notifications: [],
-      // ajoute les autres slices si nécessaire
-    });
-
-    console.error = jest.fn(); // pour éviter les erreurs bruitées
+    originalConsoleError = console.error;
+    console.error = jest.fn();
   });
 
   afterEach(() => {
     useCallbackSpy.mockRestore();
     mockAxios.reset();
-    console.error.mockRestore();
-  });
-
-  it("should render App with store", () => {
-    const store = mockStore({ auth: { isLoggedIn: false } }); // ou le state de ton app
-
-    const { getByText } = render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
+    console.error = originalConsoleError;
   });
 
   test("HandleDisplayDrawer should maintain referential equality", async () => {
