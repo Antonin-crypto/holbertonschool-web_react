@@ -1,7 +1,11 @@
-import { render, screen } from '@testing-library/react';
-import CourseList from './CourseList';
+import { render, screen } from "@testing-library/react";
+import CourseList from "./CourseList";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+
 import { StyleSheetTestUtils } from "aphrodite";
 
+// Empêcher Aphrodite d'injecter les styles pendant les tests
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
@@ -10,37 +14,42 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-test('Should render the CourseList component without crashing', () => {
-    const props = {
-        courses: [
-            { id: 1, name: 'ES6', credit: 60 },
-            { id: 2, name: 'Webpack', credit: 20 },
-            { id: 3, name: 'React', credit: 40 }
-        ]
-    }
-    render(<CourseList {...props} />)
+const renderWithStore = (courses) => {
+  const store = configureStore({
+    reducer: {
+      courses: () => courses,
+    },
+  });
+
+  render(
+    <Provider store={store}>
+      <CourseList />
+    </Provider>
+  );
+};
+
+test("Should render the CourseList component without crashing", () => {
+  renderWithStore([
+    { id: 1, name: "ES6", credit: 60 },
+    { id: 2, name: "Webpack", credit: 20 },
+    { id: 3, name: "React", credit: 40 },
+  ]);
 });
 
-test('Should render the CourseList component with 5 rows', () => {
-    const props = {
-        courses: [
-            { id: 1, name: 'ES6', credit: 60 },
-            { id: 2, name: 'Webpack', credit: 20 },
-            { id: 3, name: 'React', credit: 40 }
-        ]
-    }
-    render(<CourseList {...props} />)
+test("Should render the CourseList component with 5 rows", () => {
+  renderWithStore([
+    { id: 1, name: "ES6", credit: 60 },
+    { id: 2, name: "Webpack", credit: 20 },
+    { id: 3, name: "React", credit: 40 },
+  ]);
 
-    const rowElements = screen.getAllByRole('row');
-
-    expect(rowElements).toHaveLength(5)
+  const rows = screen.getAllByRole("row");
+  expect(rows).toHaveLength(5);
 });
 
-test('Should render the CourseList component with 1 rows', () => {
-    const props = {
-        courses: []
-    }
-    render(<CourseList {...props} />)
-    const rowElements = screen.getAllByRole('row');
-    expect(rowElements).toHaveLength(1)
+test("Should render the CourseList component with 1 row when no courses", () => {
+  renderWithStore([]);
+
+  const rows = screen.getAllByRole("row");
+  expect(rows).toHaveLength(1);
 });
