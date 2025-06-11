@@ -22,35 +22,40 @@ function CourseList() {
     <div className={css(styles.courses)}>
       <table id="CourseList" className={css(styles.table)}>
         <thead>
-          <CourseListRow
-            textFirstCell="Available courses"
-            isHeader={true}
-            style={styles.thtd}
-          />
-          <CourseListRow
-            textFirstCell="Course name"
-            textSecondCell="Credit"
-            isHeader={true}
-            style={styles.thtd}
-          />
-        </thead>
-        <tbody>
           {courses.length > 0 ? (
-            courses.map((course) => (
+            <>
+              <CourseListRow
+                textFirstCell="Available courses"
+                isHeader={true}
+                style={styles.thtd}
+              />
+              <CourseListRow
+                textFirstCell="Course name"
+                textSecondCell="Credit"
+                isHeader={true}
+                style={styles.thtd}
+              />
+            </>
+          ) : (
+            <CourseListRow
+              isHeader={true}
+              textFirstCell="No course available yet"
+              style={styles.thtd}
+            />
+          )}
+        </thead>
+        {courses.length > 0 && (
+          <tbody>
+            {courses.map((course) => (
               <CourseListRow
                 key={course.id}
                 textFirstCell={course.name}
                 textSecondCell={course.credit}
                 style={styles.thtd}
               />
-            ))
-          ) : (
-            <CourseListRow
-              textFirstCell="No course available yet"
-              style={styles.thtd}
-            />
-          )}
-        </tbody>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   );

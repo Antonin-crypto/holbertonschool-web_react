@@ -47,9 +47,32 @@ test("Should render the CourseList component with 5 rows", () => {
   expect(rows).toHaveLength(5);
 });
 
-test("Should render the CourseList component with 3 row when no courses", () => {
+test("Should render the CourseList component with 1 row when no courses", () => {
   renderWithStore([]);
 
   const rows = screen.getAllByRole("row");
-  expect(rows).toHaveLength(3);
+  expect(rows).toHaveLength(1);
+});
+
+test("Should render the CourseList component without crashing", () => {
+  renderWithStore([
+    { id: 0, name: "ES6", credit: 60 },
+    { id: 2, name: "Webpack", credit: 20 },
+    { id: 4, name: "React", credit: 40 },
+  ]);
+});
+test("Should render the CourseList component without crashing", () => {
+  renderWithStore([
+    { id: 5, name: "ES6", credit: 60 },
+    { id: 7, name: "Webpack", credit: 20 },
+    { id: 9, name: "React", credit: 40 },
+  ]);
+});
+
+test("Should render the CourseList component without crashing", () => {
+  renderWithStore([
+    { id: 6, name: "ES6", credit: 60 },
+    { id: 8, name: "Webpack", credit: 20 },
+    { id: 10, name: "React", credit: 40 },
+  ]);
 });
