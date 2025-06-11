@@ -5,25 +5,16 @@ import { logout } from "../../features/auth/authSlice";
 
 const styles = StyleSheet.create({
   header: {
-    display: "inline-flex",
-    alignItems: "center",
-    fontSize: "20px",
-    fontFamily: "sans-serif",
+    /* styles */
   },
   title: {
-    color: "#e1003c",
-    fontFamily: "'Roboto', sans-serif",
-    fontWeight: "bold",
-    fontSize: "2.5rem",
-    margin: 0,
+    /* styles */
   },
   logo: {
-    height: "30vmin",
-    pointerEvents: "none",
+    /* styles */
   },
   logoutSection: {
-    marginLeft: "auto",
-    fontSize: "1rem",
+    /* styles */
   },
 });
 export default function Header() {
