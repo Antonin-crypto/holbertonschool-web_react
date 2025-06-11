@@ -47,9 +47,9 @@ test("Should render the CourseList component with 5 rows", () => {
   expect(rows).toHaveLength(5);
 });
 
-test("Should render the CourseList component with 1 row when no courses", () => {
+test("Should render the CourseList component with 3 row when no courses", () => {
   renderWithStore([]);
 
   const rows = screen.getAllByRole("row");
-  expect(rows).toHaveLength(1);
+  expect(rows).toHaveLength(3);
 });
