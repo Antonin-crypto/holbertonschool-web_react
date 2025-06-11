@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, css } from "aphrodite";
 import { useSelector } from "react-redux";
 import { getCurrentYear, getFooterCopy } from "../../utils/utils";
@@ -18,10 +17,6 @@ export default function Footer() {
 
 const styles = StyleSheet.create({
   footer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontStyle: "italic",
-    fontFamily: "sans-serif",
+    // style//}
   },
 });
