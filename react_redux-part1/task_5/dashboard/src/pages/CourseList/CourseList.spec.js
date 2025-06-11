@@ -52,6 +52,7 @@ test("Should render the CourseList component with 1 row when no courses", () => 
 
   const rows = screen.getAllByRole("row");
   expect(rows).toHaveLength(1);
+  expect(screen.getByText("No course available yet")).toBeInTheDocument();
 });
 
 test("Should render the CourseList component without crashing", () => {
