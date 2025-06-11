@@ -14,9 +14,6 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       const { email, password } = action.payload;
-      console.log("Dispatching login action with:", { email, password });
-      console.log("Login action payload:", action.payload);
-      console.log("action login true", email);
       state.user.email = email;
       state.user.password = password;
       state.isLoggedIn = true;
@@ -24,7 +21,6 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user.email = "";
       state.user.password = "";
-      console.log("action login true", "");
       state.isLoggedIn = false;
     },
   },

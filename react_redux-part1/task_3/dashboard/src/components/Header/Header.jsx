@@ -26,31 +26,26 @@ const styles = StyleSheet.create({
     fontSize: "1rem",
   },
 });
-
 export default function Header() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  console.log("isLoggedIn in Header:", isLoggedIn);
   const user = useSelector((state) => state.auth.user);
-  console.log("App.jsx - isLoggedIn:", isLoggedIn);
+
   const handleLogout = (e) => {
     e.preventDefault();
+    console.log("Logout clicked");
     dispatch(logout());
   };
-  console.log("isLoggedIn:", isLoggedIn);
-  console.log("logout:", logout);
-  console.log("handleLogout:", handleLogout);
+
+  console.log("Header render", { isLoggedIn, user });
+
   return (
     <div className={css(styles.header)}>
       <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
       {isLoggedIn && (
-        <div
-          className={css(styles.logoutSection)}
-          id="logoutSection"
-          data-testid="logoutSection"
-        >
-          Welcome <b>{user?.email}</b>{" "}
+        <div className={css(styles.logoutSection)} id="logoutSection">
+          Welcome <b>{user.email}</b>{" "}
           <a href="#" onClick={handleLogout}>
             (logout)
           </a>
