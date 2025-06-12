@@ -15,9 +15,6 @@ const NotificationItem = memo(function NotificationItem({ id }) {
     dispatch(markNotificationAsRead(id));
   };
 
-  console.log(
-    `Rendering NotificationItem with id: ${id}, type: ${type}, value: ${value}`
-  );
   if (type === "default") {
     return (
       <li
