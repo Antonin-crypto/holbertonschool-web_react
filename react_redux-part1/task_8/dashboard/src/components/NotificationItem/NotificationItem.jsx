@@ -15,36 +15,19 @@ const NotificationItem = memo(function NotificationItem({ id }) {
     dispatch(markNotificationAsRead(id));
   };
 
-  if (type === "default") {
-    return (
-      <li
-        style={{ color: "blue" }}
-        data-notification-type={type}
-        onClick={handleClick}
-      >
-        {value}
-      </li>
-    );
-  }
-
-  if (type === "urgent" && html !== undefined) {
-    return (
-      <li
-        style={{ color: "blue" }}
-        data-notification-type={type}
-        dangerouslySetInnerHTML={html}
-        onClick={handleClick}
-      />
-    );
-  }
+  // 🧠 Couleur conditionnelle
+  const color = type === "default" ? "blue" : "red";
 
   return (
     <li
-      style={{ color: "red" }}
+      style={{ color }}
       data-notification-type={type}
       onClick={handleClick}
+      {...(html !== undefined && type === "urgent"
+        ? { dangerouslySetInnerHTML: html }
+        : {})}
     >
-      {value}
+      {html === undefined && value}
     </li>
   );
 });
