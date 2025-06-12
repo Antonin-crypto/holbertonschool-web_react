@@ -1,18 +1,33 @@
 import { memo } from "react";
 import { StyleSheet, css } from "aphrodite";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  hideDrawer,
-  showDrawer,
-  markNotificationAsRead,
-} from "../../features/notifications/notificationsSlice";
-import NotificationItem from "../NotificationItem/NotificationItem";
 import closeIcon from "../../assets/close-icon.png";
+import NotificationItem from "../NotificationItem/NotificationItem";
 
 const styles = StyleSheet.create({
-  notificationTitle: {},
-  notifications: {},
-  notificationsButton: {},
+  notificationTitle: {
+    float: "right",
+    position: "absolute",
+    right: "10px",
+    top: "2px",
+    cursor: "pointer",
+  },
+  notifications: {
+    border: "dotted",
+    borderColor: "crimson",
+    marginTop: "1%",
+    paddingLeft: "1rem",
+    marginBottom: "1rem",
+    width: "40%",
+    marginLeft: "59%",
+  },
+  notificationsButton: {
+    position: "absolute",
+    cursor: "pointer",
+    right: "5px",
+    top: "20px",
+    background: "transparent",
+    border: "none",
+  },
   notificationTypeDefault: {
     color: "blue",
   },
@@ -21,26 +36,22 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     textAlign: "right",
-    cursor: "pointer",
   },
 });
 
-const Notifications = memo(function Notifications() {
-  const dispatch = useDispatch();
-  const displayDrawer = useSelector(
-    (state) => state.notifications.displayDrawer
-  );
-  const notifications = useSelector(
-    (state) => state.notifications.notifications
-  );
-
-  const handleDisplayDrawer = () => dispatch(showDrawer());
-  const handleHideDrawer = () => dispatch(hideDrawer());
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
-
+const Notifications = memo(function Notifications({
+  displayDrawer,
+  handleDisplayDrawer,
+  handleHideDrawer,
+  notifications = [],
+  markNotificationAsRead,
+}) {
   return (
     <>
-      <div className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
+      <div
+        className={css(styles.notificationTitle)}
+        onClick={handleDisplayDrawer}
+      >
         Your notifications
       </div>
       {displayDrawer && (
@@ -63,7 +74,7 @@ const Notifications = memo(function Notifications() {
                     type={notification.type}
                     value={notification.value}
                     html={notification.html}
-                    markAsRead={() => handleMarkAsRead(notification.id)}
+                    markAsRead={() => markNotificationAsRead(notification.id)}
                     className={
                       notification.type === "urgent"
                         ? css(styles.notificationTypeUrgent)
