@@ -1,40 +1,76 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { logout } from "../auth/authSlice";
 import axios from "axios";
+import { getLatestNotification } from "../../utils/utils";
+
+const initialState = {
+  notifications: [],
+  displayDrawer: true,
+};
 
 const API_BASE_URL = "http://localhost:5173";
 const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`,
+  notifications: `${API_BASE_URL}/notifications.json`,
 };
 
-const initialState = {
-  courses: [],
-};
-
-const fetchCourses = createAsyncThunk(
-  "courses/fetchCourses",
-  async (_, thunkAPI) => {
+export const fetchNotifications = createAsyncThunk(
+  "notifications/fetchNotifications",
+  async () => {
     try {
-      const response = await axios.get(ENDPOINTS.courses);
-      return response.data.courses;
+      const response = await axios.get(ENDPOINTS.notifications);
+      const currentNotifications = response.data.notifications;
+
+      const latestNotif = {
+        id: 3,
+        type: "urgent",
+        html: { __html: getLatestNotification() },
+      };
+
+      const indexToReplace = currentNotifications.findIndex(
+        (notification) => notification.id === 3
+      );
+
+      const updatedNotifications = [...currentNotifications];
+
+      if (indexToReplace !== -1) {
+        updatedNotifications[indexToReplace] = latestNotif;
+      } else {
+        updatedNotifications.push(latestNotif);
+      }
+
+      return updatedNotifications;
     } catch (error) {
-      return thunkAPI.rejectWithValue("Error fetching courses");
+      console.error("Error fetching notifications:", error);
+      throw error;
     }
   }
 );
 
-const coursesSlice = createSlice({
-  name: "courses",
+const notificationsSlice = createSlice({
+  name: "notifications",
   initialState,
-  reducers: {},
+  reducers: {
+    markNotificationAsRead: (state, action) => {
+      const idToRemove = action.payload;
+      console.log(`Notification ${idToRemove} has been marked as read`);
+      state.notifications = state.notifications.filter(
+        (notification) => notification.id !== idToRemove
+      );
+    },
+    showDrawer: (state) => {
+      state.displayDrawer = true;
+    },
+    hideDrawer: (state) => {
+      state.displayDrawer = false;
+    },
+  },
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchCourses.fulfilled, (state, action) => {
-        state.courses = action.payload;
-      })
-      .addCase(logout, () => initialState);
+    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
+      state.notifications = action.payload;
+    });
   },
 });
 
-export { fetchCourses };
-export default coursesSlice.reducer;
+export const { markNotificationAsRead, showDrawer, hideDrawer } =
+  notificationsSlice.actions;
+
+export default notificationsSlice.reducer;

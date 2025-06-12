@@ -10,25 +10,34 @@ const NotificationItem = memo(function NotificationItem({
   console.log(
     `Rendering NotificationItem with id: ${id}, type: ${type}, value: ${value}`
   );
-
-  const handleClick = () => markAsRead(id);
+  if (type === "default") {
+    return (
+      <li
+        style={{ color: "blue" }}
+        data-notification-type={type}
+        onClick={() => markAsRead(id)}
+      >
+        {value}
+      </li>
+    );
+  }
 
   if (type === "urgent" && html !== undefined) {
     return (
       <li
-        style={{ color: "red", cursor: "pointer" }}
+        style={{ color: "red" }}
         data-notification-type={type}
-        onClick={handleClick}
         dangerouslySetInnerHTML={html}
+        onClick={() => markAsRead(id)}
       />
     );
   }
 
   return (
     <li
-      style={{ color: type === "urgent" ? "red" : "blue", cursor: "pointer" }}
+      style={{ color: "red" }}
       data-notification-type={type}
-      onClick={handleClick}
+      onClick={() => markAsRead(id)}
     >
       {value}
     </li>

@@ -5,25 +5,16 @@ import { logout } from "../../features/auth/authSlice";
 
 const styles = StyleSheet.create({
   header: {
-    //display: "inline-flex",
-    //alignItems: "center",
-    //fontSize: "20px",
-    //fontFamily: "sans-serif",
+    /* styles */
   },
   title: {
-    //color: "#e1003c",
-    //fontFamily: "'Roboto', sans-serif",
-    //fontWeight: "bold",
-    //fontSize: "2.5rem",
-    //margin: 0,
+    /* styles */
   },
   logo: {
-    //height: "30vmin",
-    //pointerEvents: "none",
+    /* styles */
   },
   logoutSection: {
-    //marginLeft: "auto",
-    //fontSize: "1rem",
+    /* styles */
   },
 });
 
@@ -34,17 +25,19 @@ export default function Header() {
 
   const handleLogout = (e) => {
     e.preventDefault();
+    console.log("Logout clicked"); // debug
     dispatch(logout());
   };
 
+  console.log("Header render", { isLoggedIn, user }); // debug
+
   return (
     <div className={css(styles.header)}>
-      {/* ✅ Correction ici : alt EXACT attendu par le test */}
-      <img src={logo} className={css(styles.logo)} alt="Holberton Logo" />
+      <img src={logo} className={css(styles.logo)} alt="holberton logo" />
       <h1 className={css(styles.title)}>School Dashboard</h1>
       {isLoggedIn && (
         <div className={css(styles.logoutSection)} id="logoutSection">
-          Welcome <b>{user?.email}</b>{" "}
+          Welcome <b>{user.email}</b>{" "}
           <a href="#" onClick={handleLogout}>
             (logout)
           </a>

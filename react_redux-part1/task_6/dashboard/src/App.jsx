@@ -93,7 +93,7 @@ export default function App() {
           <p>Holberton School news goes here</p>
         </BodySection>
       </>
-      <Footer user={state.user} />
+      <Footer />
     </>
   );
 }
