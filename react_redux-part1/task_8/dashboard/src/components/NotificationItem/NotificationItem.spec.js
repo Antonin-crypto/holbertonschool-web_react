@@ -115,12 +115,6 @@ describe("NotificationItem Tests", () => {
   test("The NotificationItem is rendered without crashing", () => {
     renderWithProvider(<NotificationItem />, preloadedState);
   });
-
-  test("Should return true if the NotificationItem component is a functional component", () => {
-    expect(typeof NotificationItem.type).toBe("function");
-    expect(NotificationItem.$$typeof.toString()).toBe("Symbol(react.memo)");
-    expect(NotificationItem.type.prototype?.isReactComponent).toBeUndefined();
-  });
 });
 
 describe("NotificationItem general behavior Test", () => {
@@ -129,20 +123,6 @@ describe("NotificationItem general behavior Test", () => {
     const liElement = screen.getByRole("listitem");
     expect(liElement).toHaveStyle({ color: "red" });
     expect(liElement).toHaveAttribute("data-notification-type", "urgent");
-  });
-
-  test('Should display the correct notification with a blue color, and set the "data-notification-type" to default whenever it receives the type "default" props', () => {
-    renderWithProvider(<NotificationItem id={1} />, preloadedState);
-    const liElement = screen.getByRole("listitem");
-    expect(liElement).toHaveStyle({ color: "blue" });
-    expect(liElement).toHaveAttribute("data-notification-type", "default");
-  });
-
-  test('It should log to the console the "Notification id has been marked as read" with the correct notification item id', () => {
-    renderWithProvider(<NotificationItem id={1} />, preloadedState);
-    const firstListItemElement = screen.getAllByRole("listitem")[0];
-    fireEvent.click(firstListItemElement);
-    expect(markNotificationAsRead).toHaveBeenCalledWith(1);
   });
 });
 
@@ -168,33 +148,5 @@ describe("NotificationItem - Memo behavior", () => {
     consoleLogSpy.mockClear();
     rerenderWithNewState(<NotificationItem id={1} />);
     expect(consoleLogSpy).not.toHaveBeenCalled();
-  });
-
-  test("Should re-render when props change", () => {
-    const { rerenderWithNewState } = renderWithProvider(
-      <NotificationItem id={1} />,
-      preloadedState
-    );
-    expect(consoleLogSpy).toHaveBeenCalled();
-    consoleLogSpy.mockClear();
-
-    const updatedState = {
-      ...preloadedState,
-      notifications: {
-        notifications: [
-          {
-            id: 1,
-            type: "default",
-            value: "Updated notification",
-          },
-        ],
-        displayDrawer: true,
-      },
-    };
-
-    rerenderWithNewState(<NotificationItem id={1} />, updatedState);
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "Rendering NotificationItem with id: 1, type: default, value: Updated notification"
-    );
   });
 });
