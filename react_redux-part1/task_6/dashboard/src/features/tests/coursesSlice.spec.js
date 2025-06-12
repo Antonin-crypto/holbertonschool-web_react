@@ -1,57 +1,53 @@
+import coursesReducer, { fetchCourses } from "../courses/coursesSlice";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
 import { configureStore } from "@reduxjs/toolkit";
-import coursesReducer, { fetchCourses } from "./coursesSlice";
 import { logout } from "../auth/authSlice";
 
-// Mock API response
-const mockCourses = [
-  { id: 1, title: "React Basics" },
-  { id: 2, title: "Advanced Redux" },
+const ENDPOINTS = {
+  courses: "http://localhost:5173/courses.json",
+};
+
+const mockData = [
+  { id: 1, name: "ES6", credit: 60 },
+  { id: 2, name: "Webpack", credit: 20 },
+  { id: 3, name: "React", credit: 40 },
 ];
 
-// Mock fetch globally
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve(mockCourses),
-  })
-);
+const prevState = {
+  courses: [{ id: 1, name: "ES6", credit: 60 }],
+};
 
-describe("coursesSlice", () => {
-  let store;
+let mock;
 
-  beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        courses: coursesReducer,
-      },
+beforeEach(() => {
+  mock = new MockAdapter(axios);
+});
+
+afterEach(() => {
+  mock.restore();
+});
+
+describe("courseSlice", () => {
+  it("should return the initial state by default", () => {
+    expect(coursesReducer(undefined, { type: undefined })).toEqual({
+      courses: [],
     });
-    fetch.mockClear();
   });
 
-  test("should return the initial state", () => {
-    const state = store.getState().courses;
-    expect(state).toEqual({ courses: [] });
-  });
+  it("should fetch courses data and update the state", async () => {
+    const mockCourses = mockData;
+    mock.onGet(ENDPOINTS.courses).reply(200, { courses: mockCourses });
 
-  test("should fetch and store courses data", async () => {
+    const store = configureStore({ reducer: { courses: coursesReducer } });
     await store.dispatch(fetchCourses());
 
     const state = store.getState().courses;
     expect(state.courses).toEqual(mockCourses);
-    expect(fetch).toHaveBeenCalledWith("http://localhost:5173/courses.json");
   });
 
-  test("should reset courses state on logout", async () => {
-    // First fetch courses
-    await store.dispatch(fetchCourses());
-
-    // Confirm data is loaded
-    expect(store.getState().courses.courses).toEqual(mockCourses);
-
-    // Dispatch logout
-    store.dispatch(logout());
-
-    // Expect state reset
-    expect(store.getState().courses).toEqual({ courses: [] });
+  it("should reset courses array to empty on logout", () => {
+    const nextState = coursesReducer(prevState, logout());
+    expect(nextState.courses).toEqual([]);
   });
 });

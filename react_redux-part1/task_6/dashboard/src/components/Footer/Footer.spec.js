@@ -2,6 +2,11 @@ import { render, screen } from "@testing-library/react";
 import Footer from "./Footer";
 import { getCurrentYear, getFooterCopy } from "../../utils/utils";
 import { StyleSheetTestUtils } from "aphrodite";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "../../features/auth/authSlice";
+import coursesReducer from "../../features/courses/coursesSlice";
+import notificationsReducer from "../../features/notifications/notificationsSlice";
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -11,16 +16,23 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
+export function renderWithProvider(ui, preloadedState = {}) {
+  const store = configureStore({
+    reducer: {
+      auth: authReducer,
+      courses: coursesReducer,
+      notifications: notificationsReducer,
+    },
+    preloadedState,
+  });
+
+  return render(<Provider store={store}>{ui}</Provider>);
+}
+
 describe("Footer Component", () => {
-  const defaultUser = { isLoggedIn: false, email: "", password: "" };
-  const loggedInUser = {
-    isLoggedIn: true,
-    email: "test@example.com",
-    password: "password123",
-  };
   describe("Basic Rendering", () => {
     test("Renders without crashing", () => {
-      render(<Footer user={defaultUser} />);
+      renderWithProvider(<Footer />);
       const footerParagraph = screen.getByText(
         `Copyright ${getCurrentYear()} - ${getFooterCopy(true)}`
       );
@@ -30,13 +42,19 @@ describe("Footer Component", () => {
     });
 
     test("Does not render contact link when user is not logged in", () => {
-      render(<Footer user={defaultUser} />);
+      renderWithProvider(<Footer />);
       const link = screen.queryByRole("link", { name: /contact us/i });
       expect(link).not.toBeInTheDocument();
     });
 
     test("Renders contact link when user is logged in", () => {
-      render(<Footer user={loggedInUser} />);
+      const preloadedState = {
+        auth: {
+          user: { email: "test@testing.tst", password: "12345678" },
+          isLoggedIn: true,
+        },
+      };
+      renderWithProvider(<Footer />, preloadedState);
       const link = screen.getByRole("link", { name: /contact us/i });
       expect(link).toBeInTheDocument();
     });
@@ -44,15 +62,20 @@ describe("Footer Component", () => {
 
   describe("Edge Scenarios", () => {
     test("does not render contact link when user email is null", () => {
-      const withTruthyIsLoggedIn = { isLoggedIn: true };
-      render(<Footer user={withTruthyIsLoggedIn} />);
+      const preloadedState = {
+        auth: { user: { email: null }, isLoggedIn: false },
+      };
+      renderWithProvider(<Footer />, preloadedState);
       const link = screen.queryByRole("link", { name: /contact us/i });
-      expect(link).toBeInTheDocument();
+      expect(link).not.toBeInTheDocument();
     });
 
     test("Does not render contact link when user email is invalid", () => {
-      const withFalsyIsLoggedIn = { isLoggedIn: false };
-      render(<Footer user={withFalsyIsLoggedIn} />);
+      const preloadedState = {
+        auth: { isLoggedIn: false },
+      };
+
+      renderWithProvider(<Footer />, preloadedState);
 
       const link = screen.queryByRole("link", { name: /contact us/i });
       expect(link).not.toBeInTheDocument();

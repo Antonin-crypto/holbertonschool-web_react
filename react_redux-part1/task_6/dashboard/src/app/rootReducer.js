@@ -1,11 +1,8 @@
-// src/app/rootReducer.js
-
-import { combineReducers } from "@reduxjs/toolkit";
+import coursesReducer from "../features/courses/coursesSlice";
 import authReducer from "../features/auth/authSlice";
 import notificationsReducer from "../features/notifications/notificationsSlice";
-import coursesReducer from "../features/courses/coursesSlice";
+import { combineReducers } from "redux";
 
-// 🔗 Combine all slice reducers into one root reducer
 const rootReducer = combineReducers({
   auth: authReducer,
   notifications: notificationsReducer,

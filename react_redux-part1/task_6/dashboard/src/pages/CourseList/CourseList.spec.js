@@ -1,6 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import CourseList from "./CourseList";
 import { StyleSheetTestUtils } from "aphrodite";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "../../features/auth/authSlice";
+import coursesReducer from "../../features/courses/coursesSlice";
+import notificationsReducer from "../../features/notifications/notificationsSlice";
+import * as courseSlice from "../../features/courses/coursesSlice";
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -10,37 +16,81 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-test("Should render the CourseList component without crashing", () => {
-  const props = {
-    courses: [
-      { id: 1, name: "ES6", credit: 60 },
-      { id: 2, name: "Webpack", credit: 20 },
-      { id: 3, name: "React", credit: 40 },
-    ],
+function renderWithProvider(ui, preloadedState = {}) {
+  const store = configureStore({
+    reducer: {
+      auth: authReducer,
+      courses: coursesReducer,
+      notifications: notificationsReducer,
+    },
+    preloadedState,
+  });
+
+  return render(<Provider store={store}>{ui}</Provider>);
+}
+
+jest.spyOn(courseSlice, "fetchCourses").mockImplementation(() => () => {});
+
+test("renders without crashing", async () => {
+  const preloadedState = {
+    auth: {
+      user: {
+        email: "test@example.com",
+        password: "12345678",
+      },
+      isLoggedIn: true,
+    },
+    courses: {
+      courses: [
+        { id: 1, name: "ES6", credit: 60 },
+        { id: 2, name: "WebPack", credit: 20 },
+        { id: 3, name: "React", credit: 40 },
+      ],
+    },
   };
-  render(<CourseList {...props} />);
+  renderWithProvider(<CourseList />, preloadedState);
+  const title = await screen.findByText(/Available courses/i);
+  expect(title).toBeInTheDocument();
 });
 
-test("Should render the CourseList component with 5 rows", () => {
-  const props = {
-    courses: [
-      { id: 1, name: "ES6", credit: 60 },
-      { id: 2, name: "Webpack", credit: 20 },
-      { id: 3, name: "React", credit: 40 },
-    ],
+test("renders correct number of rows when courses are available", async () => {
+  const preloadedState = {
+    auth: {
+      user: {
+        email: "test@example.com",
+        password: "12345678",
+      },
+      isLoggedIn: true,
+    },
+    courses: {
+      courses: [
+        { id: 1, name: "ES6", credit: 60 },
+        { id: 2, name: "WebPack", credit: 20 },
+        { id: 3, name: "React", credit: 40 },
+      ],
+    },
   };
-  render(<CourseList {...props} />);
-
-  const rowElements = screen.getAllByRole("row");
-
-  expect(rowElements).toHaveLength(5);
+  renderWithProvider(<CourseList />, preloadedState);
+  const rows = await screen.findAllByRole("row");
+  expect(rows).toHaveLength(5);
 });
 
-test("Should render the CourseList component with 1 rows", () => {
-  const props = {
-    courses: [],
+test("renders fallback when no courses available", () => {
+  const preloadedState = {
+    auth: {
+      user: {
+        email: "test@example.com",
+        password: "12345678",
+      },
+      isLoggedIn: true,
+    },
+    courses: {
+      courses: [],
+    },
   };
-  render(<CourseList {...props} />);
-  const rowElements = screen.getAllByRole("row");
-  expect(rowElements).toHaveLength(1);
+
+  renderWithProvider(<CourseList />, preloadedState);
+
+  const noCoursesRow = screen.getByText(/no course available yet/i);
+  expect(noCoursesRow).toBeInTheDocument();
 });

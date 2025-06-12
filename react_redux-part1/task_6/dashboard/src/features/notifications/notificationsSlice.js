@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getLatestNotification } from "../../utils/utils";
+import axios from "axios";
 
 const initialState = {
   notifications: [],
@@ -45,22 +45,26 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
-const notificationsSlice = createSlice({
+export const notificationsSlice = createSlice({
   name: "notifications",
   initialState,
   reducers: {
     markNotificationAsRead: (state, action) => {
-      const idToRemove = action.payload;
-      console.log(`Notification ${idToRemove} has been marked as read`);
+      const id = action.payload || null;
+
+      if (typeof id !== "number") return;
+
       state.notifications = state.notifications.filter(
-        (notification) => notification.id !== idToRemove
+        (notification) => notification.id !== id
       );
-    },
-    showDrawer: (state) => {
-      state.displayDrawer = true;
+
+      console.log(`Notification ${id} has been marked as read`);
     },
     hideDrawer: (state) => {
       state.displayDrawer = false;
+    },
+    showDrawer: (state) => {
+      state.displayDrawer = true;
     },
   },
   extraReducers: (builder) => {
@@ -70,7 +74,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { markNotificationAsRead, showDrawer, hideDrawer } =
+export const { markNotificationAsRead, hideDrawer, showDrawer } =
   notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

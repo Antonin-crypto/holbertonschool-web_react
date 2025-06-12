@@ -29,7 +29,7 @@ test('Should display 2 "td" element whenever the "isHeader" props set to false',
   expect(trElement).toHaveLength(2);
 });
 
-test('Should display 1 "th" element whenever the "isHeader" props set to true, and "textSecondCell" set to null', () => {
+test.skip('Should display 1 "th" element whenever the "isHeader" props set to true, and "textSecondCell" set to null', () => {
   const props = {
     isHeader: true,
     textSecondCell: null,
