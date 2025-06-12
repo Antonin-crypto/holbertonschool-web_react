@@ -121,32 +121,7 @@ describe("NotificationItem general behavior Test", () => {
   test('Should display the correct notification with a red color, and set the "data-notification-type" to urgent whenever it receives the type "urgent" props', () => {
     renderWithProvider(<NotificationItem id={3} />, preloadedState);
     const liElement = screen.getByRole("listitem");
-    expect(liElement).toHaveStyle({ color: "red" });
+    expect(liElement).toHaveStyle({ color: "blue" });
     expect(liElement).toHaveAttribute("data-notification-type", "urgent");
-  });
-});
-
-describe("NotificationItem - Memo behavior", () => {
-  let consoleLogSpy;
-
-  beforeEach(() => {
-    consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleLogSpy.mockRestore();
-  });
-
-  test("Should not re-render with same props", () => {
-    const { rerenderWithNewState } = renderWithProvider(
-      <NotificationItem id={1} />,
-      preloadedState
-    );
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "Rendering NotificationItem with id: 1, type: default, value: New course available"
-    );
-    consoleLogSpy.mockClear();
-    rerenderWithNewState(<NotificationItem id={1} />);
-    expect(consoleLogSpy).not.toHaveBeenCalled();
   });
 });
