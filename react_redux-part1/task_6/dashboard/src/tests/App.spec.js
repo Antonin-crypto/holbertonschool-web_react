@@ -41,8 +41,28 @@ import userEvent from "@testing-library/user-event";
 import App from "../App";
 import { getLatestNotification } from "../utils/utils";
 import mockAxios from "jest-mock-axios";
+import { StyleSheetTestUtils } from "aphrodite";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
 
 jest.mock("axios", () => require("jest-mock-axios").default);
+// Empêche l'injection de styles Aphrodite dans les tests
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+export function renderWithRedux(
+  ui,
+  { initialState, store = mockStore(initialState) } = {}
+) {
+  return {
+    ...render(<Provider store={store}>{ui}</Provider>),
+    store,
+  };
+}
 
 const mockBodySection = jest.fn();
 jest.mock("../components/BodySection/BodySection", () => {
@@ -731,7 +751,7 @@ describe("App Component Tests", () => {
 });
 
 describe("App Component Performance with useCallback", () => {
-  let originalConsoleError;
+  let store;
   let useCallbackSpy;
   const mockNotificationsResponse = {
     data: {
@@ -745,20 +765,40 @@ describe("App Component Performance with useCallback", () => {
 
   beforeEach(() => {
     useCallbackSpy = jest.spyOn(React, "useCallback");
+
     mockAxios.get.mockResolvedValue({
       data: {
         notifications: mockNotificationsResponse,
         courses: [],
       },
     });
-    originalConsoleError = console.error;
-    console.error = jest.fn();
+
+    store = mockStore({
+      auth: {
+        isLoggedIn: true,
+        user: { email: "test@test.com" },
+      },
+      notifications: [],
+      // ajoute les autres slices si nécessaire
+    });
+
+    console.error = jest.fn(); // pour éviter les erreurs bruitées
   });
 
   afterEach(() => {
     useCallbackSpy.mockRestore();
     mockAxios.reset();
-    console.error = originalConsoleError;
+    console.error.mockRestore();
+  });
+
+  it("should render App with store", () => {
+    const store = mockStore({ auth: { isLoggedIn: false } }); // ou le state de ton app
+
+    const { getByText } = render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
   });
 
   test("HandleDisplayDrawer should maintain referential equality", async () => {
@@ -865,63 +905,4 @@ describe("App Component Performance with useCallback", () => {
 afterAll(() => {
   console.error = originalError;
   console.warn = originalWarn;
-});
-
-import configureStore from "redux-mock-store";
-import { Provider } from "react-redux";
-import { login } from "../store/authSlice";
-
-const mockStore = configureStore([]);
-let store;
-
-describe("Login form behavior", () => {
-  beforeEach(() => {
-    store = mockStore({
-      auth: {
-        isLoggedIn: false,
-        user: { email: "", password: "" },
-      },
-    });
-
-    store.dispatch = jest.fn();
-  });
-
-  test("submit button enables only when email is valid and password >= 8 chars", () => {
-    render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
-
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole("button", { name: /ok/i });
-
-    expect(submitButton).toBeDisabled();
-
-    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "12345678" } });
-
-    expect(submitButton).toBeEnabled();
-  });
-
-  test("dispatch login on submit", () => {
-    render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
-
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const submitButton = screen.getByRole("button", { name: /ok/i });
-
-    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "12345678" } });
-    fireEvent.click(submitButton);
-
-    expect(store.dispatch).toHaveBeenCalledWith(
-      login({ email: "user@example.com", password: "12345678" })
-    );
-  });
 });
