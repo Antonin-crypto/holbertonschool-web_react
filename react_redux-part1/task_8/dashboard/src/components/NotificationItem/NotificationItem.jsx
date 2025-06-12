@@ -15,36 +15,16 @@ const NotificationItem = memo(function NotificationItem({ id }) {
     dispatch(markNotificationAsRead(id));
   };
 
-  if (type === "default") {
-    return (
-      <li
-        style={{ color: "blue" }}
-        data-notification-type={type}
-        onClick={handleClick}
-      >
-        {value}
-      </li>
-    );
-  }
-
-  if (type === "urgent" && html !== undefined) {
-    return (
-      <li
-        style={{ color: "blue" }}
-        data-notification-type={type}
-        dangerouslySetInnerHTML={html}
-        onClick={handleClick}
-      />
-    );
-  }
+  const style = { color: type === "urgent" ? "red" : "blue" };
 
   return (
     <li
-      style={{ color: "red" }}
+      style={style}
       data-notification-type={type}
       onClick={handleClick}
+      {...(html ? { dangerouslySetInnerHTML: html } : {})}
     >
-      {value}
+      {!html ? value : null}
     </li>
   );
 });
