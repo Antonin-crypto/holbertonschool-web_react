@@ -7,27 +7,30 @@ import configureStore from "redux-mock-store";
 
 const mockStore = configureStore([]);
 
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
 describe("Footer Component", () => {
-  beforeEach(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
-
-  afterEach(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
-
-  const renderWithStore = (initialState) => {
-    const store = mockStore(initialState);
-    return render(
-      <Provider store={store}>
-        <Footer />
-      </Provider>
-    );
-  };
+  const getStore = (isLoggedIn) =>
+    mockStore({
+      auth: {
+        isLoggedIn,
+        user: isLoggedIn ? { email: "test@example.com" } : {},
+      },
+    });
 
   describe("Basic Rendering", () => {
     test("Renders without crashing", () => {
-      renderWithStore({ auth: { isLoggedIn: false } });
+      render(
+        <Provider store={getStore(false)}>
+          <Footer />
+        </Provider>
+      );
       const footerParagraph = screen.getByText(
         `Copyright ${getCurrentYear()} - ${getFooterCopy(true)}`
       );
@@ -37,29 +40,55 @@ describe("Footer Component", () => {
     });
 
     test("Does not render contact link when user is not logged in", () => {
-      renderWithStore({ auth: { isLoggedIn: false } });
+      render(
+        <Provider store={getStore(false)}>
+          <Footer />
+        </Provider>
+      );
       const link = screen.queryByRole("link", { name: /contact us/i });
       expect(link).not.toBeInTheDocument();
     });
 
     test("Renders contact link when user is logged in", () => {
-      renderWithStore({
-        auth: { isLoggedIn: true, user: { email: "test@example.com" } },
-      });
+      render(
+        <Provider store={getStore(true)}>
+          <Footer />
+        </Provider>
+      );
       const link = screen.getByRole("link", { name: /contact us/i });
       expect(link).toBeInTheDocument();
     });
   });
 
   describe("Edge Scenarios", () => {
-    test("Renders contact link when isLoggedIn is true and user email is missing", () => {
-      renderWithStore({ auth: { isLoggedIn: true } });
+    test("Renders contact link when isLoggedIn is true but no email", () => {
+      const store = mockStore({
+        auth: {
+          isLoggedIn: true,
+          user: {},
+        },
+      });
+      render(
+        <Provider store={store}>
+          <Footer />
+        </Provider>
+      );
       const link = screen.queryByRole("link", { name: /contact us/i });
       expect(link).toBeInTheDocument();
     });
 
-    test("Does not render contact link when isLoggedIn is false", () => {
-      renderWithStore({ auth: { isLoggedIn: false } });
+    test("Does not render contact link when user isLoggedIn is false", () => {
+      const store = mockStore({
+        auth: {
+          isLoggedIn: false,
+          user: { email: "test@example.com" },
+        },
+      });
+      render(
+        <Provider store={store}>
+          <Footer />
+        </Provider>
+      );
       const link = screen.queryByRole("link", { name: /contact us/i });
       expect(link).not.toBeInTheDocument();
     });

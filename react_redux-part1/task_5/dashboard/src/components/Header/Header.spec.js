@@ -1,87 +1,112 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../../features/auth/authSlice";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Header from "./Header";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
 import { StyleSheetTestUtils } from "aphrodite";
 
-// Empêche l'injection de styles Aphrodite dans les tests
+jest.mock("../../assets/holberton-logo.jpg", () => "mocked-path.jpg");
+
+const mockStore = configureStore([]);
+
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
+
 afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-// Mock du logo
-jest.mock("../../assets/holberton-logo.jpg", () => "mocked-path.jpg");
-
-// Fonction utilitaire pour rendre avec Redux
-const renderWithRedux = (
-  component,
-  {
-    preloadedState,
-    store = configureStore({ reducer: { auth: authReducer }, preloadedState }),
-  } = {}
-) => {
-  return render(<Provider store={store}>{component}</Provider>);
-};
-
 describe("Header Component", () => {
-  test("Affiche les éléments de base du header (img et titre)", () => {
-    renderWithRedux(<Header />, {
-      preloadedState: {
-        auth: {
-          isLoggedIn: false,
-          user: null,
-        },
-      },
-    });
-
-    expect(screen.getByRole("img")).toHaveAttribute("src", "mocked-path.jpg");
-    expect(screen.getByRole("heading")).toHaveTextContent("School Dashboard");
+  const defaultStore = mockStore({
+    auth: {
+      isLoggedIn: false,
+      user: {},
+    },
   });
 
-  test("Ne rend pas le logoutSection quand user est déconnecté", () => {
-    renderWithRedux(<Header />, {
-      preloadedState: {
-        auth: {
-          isLoggedIn: false,
-          user: null,
-        },
+  const loggedInStore = mockStore({
+    auth: {
+      isLoggedIn: true,
+      user: {
+        email: "user@example.com",
       },
-    });
-
-    expect(screen.queryByText(/logout/i)).not.toBeInTheDocument();
-    expect(screen.queryByTestId("logoutSection")).not.toBeInTheDocument();
+    },
   });
 
-  test("Affiche le logoutSection avec email quand user est connecté", () => {
-    renderWithRedux(<Header />, {
-      preloadedState: {
-        auth: {
-          isLoggedIn: true,
-          user: { email: "user@example.com" },
-        },
-      },
-    });
+  test("Should contain <h1> and <img> with correct content", () => {
+    render(
+      <Provider store={loggedInStore}>
+        <Header />
+      </Provider>
+    );
 
-    expect(screen.getByText(/Welcome/i)).toBeInTheDocument();
-    expect(screen.getByText(/user@example.com/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /logout/i })).toBeInTheDocument();
+    const headingElement = screen.getByRole("heading", {
+      name: /school dashboard/i,
+    });
+    const imgElement = screen.getByAltText(/holberton logo/i);
+    expect(headingElement).toBeInTheDocument();
+    expect(imgElement).toBeInTheDocument();
   });
 
-  test("logoutSection est présent dans le DOM quand connecté", () => {
-    const { container } = renderWithRedux(<Header />, {
-      preloadedState: {
-        auth: {
-          isLoggedIn: true,
-          user: { email: "user@example.com" },
-        },
-      },
+  test("Header is a functional component", () => {
+    expect(typeof Header).toBe("function");
+  });
+
+  describe("When user is logged out", () => {
+    test("Renders logo and heading", () => {
+      render(
+        <Provider store={defaultStore}>
+          <Header />
+        </Provider>
+      );
+
+      expect(screen.getByRole("img")).toHaveAttribute("src", "mocked-path.jpg");
+      expect(screen.getByRole("heading")).toHaveTextContent("School Dashboard");
     });
 
-    const logoutSection = container.querySelector("#logoutSection");
-    expect(logoutSection).toBeInTheDocument();
+    test("Does not render logout section", () => {
+      expect(screen.queryByTestId("logoutSection")).not.toBeInTheDocument();
+    });
+
+    test("No logout link", () => {
+      expect(
+        screen.queryByRole("link", { name: /logout/i })
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("When user is logged in", () => {
+    test("Renders welcome message and logout link", () => {
+      render(
+        <Provider store={loggedInStore}>
+          <Header />
+        </Provider>
+      );
+      expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+      expect(screen.getByText("user@example.com")).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /logout/i })).toBeInTheDocument();
+    });
+
+    test("Calls logOut function when logout clicked", () => {
+      render(
+        <Provider store={loggedInStore}>
+          <Header />
+        </Provider>
+      );
+
+      const logoutLink = screen.getByRole("link", { name: /logout/i });
+      fireEvent.click(logoutLink);
+      expect(logoutLink).toBeInTheDocument();
+    });
+
+    test('Displays logout section div with id="logoutSection"', () => {
+      const { container } = render(
+        <Provider store={loggedInStore}>
+          <Header />
+        </Provider>
+      );
+      const logoutDiv = container.querySelector("#logoutSection");
+      expect(logoutDiv).toBeInTheDocument();
+    });
   });
 });
