@@ -15,19 +15,36 @@ const NotificationItem = memo(function NotificationItem({ id }) {
     dispatch(markNotificationAsRead(id));
   };
 
-  // 🧠 Couleur conditionnelle
-  const color = type === "default" ? "blue" : "red";
+  if (type === "default") {
+    return (
+      <li
+        style={{ color: "blue" }}
+        data-notification-type={type}
+        onClick={handleClick}
+      >
+        {value}
+      </li>
+    );
+  }
+
+  if (type === "urgent" && html !== undefined) {
+    return (
+      <li
+        style={{ color: "blue" }}
+        data-notification-type={type}
+        dangerouslySetInnerHTML={html}
+        onClick={handleClick}
+      />
+    );
+  }
 
   return (
     <li
-      style={{ color }}
+      style={{ color: "red" }}
       data-notification-type={type}
       onClick={handleClick}
-      {...(html !== undefined && type === "urgent"
-        ? { dangerouslySetInnerHTML: html }
-        : {})}
     >
-      {html === undefined && value}
+      {value}
     </li>
   );
 });
