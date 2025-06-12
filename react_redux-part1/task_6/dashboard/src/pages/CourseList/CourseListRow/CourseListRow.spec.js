@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import CourseList from "./CourseList";
+import CourseList from "../CourseList";
 import { StyleSheetTestUtils } from "aphrodite";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
