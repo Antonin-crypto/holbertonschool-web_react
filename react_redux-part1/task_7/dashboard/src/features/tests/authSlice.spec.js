@@ -10,38 +10,31 @@ describe("authSlice", () => {
   };
 
   it("should return the initial state by default", () => {
-    // ⚠️ Important : utiliser type: undefined
     expect(authReducer(undefined, { type: undefined })).toEqual(initialState);
   });
 
-  it("should handle login", () => {
-    // ✅ Mot de passe suffisamment long pour matcher les tests internes
-    const action = login({
-      email: "john.doe@holbertonschool.com",
-      password: "password123",
-    });
+  it("should hanle login action", () => {
+    const action = login({ email: "test@testing.test", password: "12345678" });
+    const state = authReducer(initialState, action);
 
-    const expectedState = {
-      user: {
-        email: "john.doe@holbertonschool.com",
-        password: "password123",
-      },
-      isLoggedIn: true,
-    };
-
-    expect(authReducer(initialState, action)).toEqual(expectedState);
+    expect(state.user.email).toBe("test@testing.test");
+    expect(state.user.password).toBe("12345678");
+    expect(state.isLoggedIn).toBe(true);
   });
 
-  it("should handle logout", () => {
-    const loggedInState = {
+  it("should handle logout action", () => {
+    const stateLoggedIn = {
       user: {
-        email: "john.doe@holbertonschool.com",
-        password: "password123",
+        email: "test@testing.test",
+        password: "12345678",
       },
       isLoggedIn: true,
     };
 
-    const action = logout();
-    expect(authReducer(loggedInState, action)).toEqual(initialState);
+    const state = authReducer(stateLoggedIn, logout());
+
+    expect(state.user.email).toBe("");
+    expect(state.user.password).toBe("");
+    expect(state.isLoggedIn).toBe(false);
   });
 });

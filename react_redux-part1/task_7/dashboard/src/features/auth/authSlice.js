@@ -8,19 +8,19 @@ const initialState = {
   isLoggedIn: false,
 };
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     login: (state, action) => {
-      state.user.email = action.payload.email;
-      state.user.password = action.payload.password;
+      const { email, password } = action.payload;
+      state.user.email = email;
+      state.user.password = password;
       state.isLoggedIn = true;
     },
     logout: (state) => {
-      state.user.email = "";
-      state.user.password = "";
-      state.isLoggedIn = false;
+      state.user = initialState.user;
+      state.isLoggedIn = initialState.isLoggedIn;
     },
   },
 });
