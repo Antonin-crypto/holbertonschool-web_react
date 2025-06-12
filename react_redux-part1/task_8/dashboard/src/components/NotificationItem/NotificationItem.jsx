@@ -30,7 +30,7 @@ const NotificationItem = memo(function NotificationItem({ id }) {
   if (type === "urgent" && html !== undefined) {
     return (
       <li
-        style={{ color: "red" }}
+        style={{ color: "green" }}
         data-notification-type={type}
         dangerouslySetInnerHTML={html}
         onClick={handleClick}
