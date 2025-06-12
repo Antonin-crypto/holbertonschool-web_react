@@ -1,39 +1,18 @@
-import React, { memo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { memo } from "react";
 import { StyleSheet, css } from "aphrodite";
-import closeIcon from "../../assets/close-icon.png";
-import NotificationItem from "../NotificationItem/NotificationItem";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  hideDrawer,
+  showDrawer,
   markNotificationAsRead,
-  showNotificationDrawer,
-  hideNotificationDrawer,
-} from "../Notifications/notificationActionCreators";
+} from "../../features/notifications/notificationsSlice";
+import NotificationItem from "../NotificationItem/NotificationItem";
+import closeIcon from "../../assets/close-icon.png";
 
 const styles = StyleSheet.create({
-  notificationTitle: {
-    float: "right",
-    position: "absolute",
-    right: "10px",
-    top: "2px",
-    cursor: "pointer",
-  },
-  notifications: {
-    border: "dotted",
-    borderColor: "crimson",
-    marginTop: "1%",
-    paddingLeft: "1rem",
-    marginBottom: "1rem",
-    width: "40%",
-    marginLeft: "59%",
-  },
-  notificationsButton: {
-    position: "absolute",
-    cursor: "pointer",
-    right: "5px",
-    top: "20px",
-    background: "transparent",
-    border: "none",
-  },
+  notificationTitle: {},
+  notifications: {},
+  notificationsButton: {},
   notificationTypeDefault: {
     color: "blue",
   },
@@ -42,32 +21,26 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     textAlign: "right",
+    cursor: "pointer",
   },
 });
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const displayDrawer = useSelector((state) => state.ui.displayDrawer);
-  const notifications = useSelector((state) => state.notifications);
+  const displayDrawer = useSelector(
+    (state) => state.notifications.displayDrawer
+  );
+  const notifications = useSelector(
+    (state) => state.notifications.notifications
+  );
 
-  const handleDisplayDrawer = () => {
-    dispatch(showNotificationDrawer());
-  };
-
-  const handleHideDrawer = () => {
-    dispatch(hideNotificationDrawer());
-  };
-
-  const handleMarkAsRead = (id) => {
-    dispatch(markNotificationAsRead(id));
-  };
+  const handleDisplayDrawer = () => dispatch(showDrawer());
+  const handleHideDrawer = () => dispatch(hideDrawer());
+  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
 
   return (
     <>
-      <div
-        className={css(styles.notificationTitle)}
-        onClick={handleDisplayDrawer}
-      >
+      <div className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
         Your notifications
       </div>
       {displayDrawer && (
